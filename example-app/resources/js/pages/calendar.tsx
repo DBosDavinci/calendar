@@ -1,0 +1,130 @@
+import { Form, router } from '@inertiajs/react';
+
+interface Dates {
+    date: string;
+    title: string;
+    description: string;
+    color: string;
+    id: number;
+}
+
+interface CalendarProps {
+    dates: Dates[];
+    filter: string;
+}
+
+export default function Welcome({ dates, filter }: CalendarProps) {
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        router.get('/', { filter: e.target.value }, { preserveState: true });
+    };
+
+    return (
+        <>
+            <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:p-8">
+                <h1 className="text-4xl font-semibold">Calendar</h1>
+                <div className="mt-20 w-full max-w-md">
+                    <h2 className='text-2xl font-semibold mb-4'>Plan an event</h2>
+                    <Form method="post" action="/submit-date">
+                        <input type="text" name="title" placeholder="Event Title" className="mb-4 rounded border border-gray-300 px-3 py-2 w-full" required />
+                        <textarea name="description" placeholder="Event Description" className="mb-4 rounded border border-gray-300 px-3 py-2 w-full" />
+                        <label className="mr-3 text-lg font-medium">Color</label>
+                        <input type="color" name="color" className="mb-4 rounded border border-gray-300 px-5 py-1 w-4/5" required />
+                        <label className="mr-3 text-lg font-medium">Date</label>
+                        <input type="datetime-local" name="date" className="mb-4 rounded border border-gray-300 px-3 py-2 w-4/5" required />
+                        <button
+                            type='submit'
+                            className="mt-4 rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600 disabled:opacity-50 w-full"
+                        >
+                            Submit Date
+                        </button>
+                    </Form>
+                </div>
+                <div className="mt-20 w-full max-w-md">
+                    <div className="flex items-center mb-4">
+                        <h2 className="text-2xl font-semibold">Planned events</h2>
+                        <select value={filter} onChange={handleFilterChange} className="ml-auto rounded border border-gray-300 px-3 py-2">
+                            <option value="day">Day</option>
+                            <option value="week">Week</option>
+                            <option value="month">Month</option>
+                        </select>
+                    </div>
+                    {filter === 'day' ? (
+                        <div>
+                            {Array.from({ length: 24 }, (_, i) => i).map(hour => {
+                                const eventsAtHour = dates.filter(
+                                    e => new Date(e.date).getHours() === hour
+                                );
+
+                                return (
+                                    <div key={hour} className="border rounded mb-2 p-2">
+                                        <p className="text-sm text-gray-500">
+                                            {hour.toString().padStart(2, '0')}:00
+                                        </p>
+
+                                        {eventsAtHour.map(event => (
+                                            <div key={event.id} className="flex items-center">
+                                                <span className="rounded-xl w-2 h-2 mr-3" style={{ backgroundColor: event.color }}></span>
+                                                <span className="font-semibold w-1/2">{event.title}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })}
+                        </div>) : filter === 'week' ? (
+                            <div>
+                                {Array.from({ length: 7 }, (_, i) => {
+                                    const day = new Date();
+                                    day.setDate(day.getDate() - day.getDay() + i + 1);
+
+                                    const dayEvents = dates.filter(
+                                        e => new Date(e.date).toDateString() === day.toDateString()
+                                    );
+
+                                    return (
+                                        <div key={i} className="border rounded mb-2 p-2">
+                                            <p className="text-sm text-gray-500">
+                                                {day.toLocaleDateString(undefined, { weekday: 'long' })}
+                                            </p>
+
+                                            {dayEvents.map(event => (
+                                                <div key={event.id} className="flex items-center">
+                                                    <span className="rounded-xl w-2 h-2 mr-3" style={{ backgroundColor: event.color }}></span>
+                                                    <span className="font-semibold w-1/2">{event.title}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : filter === 'month' ? (
+                            <div>
+                                {Array.from({ length: 30 }, (_, i) => {
+                                    const day = new Date();
+                                    day.setDate(i + 1);
+
+                                    const dayEvents = dates.filter(
+                                        e => new Date(e.date).getDate() === day.getDate()
+                                    );
+
+                                    return (
+                                        <div key={i} className="border rounded mb-2 p-2 w-full">
+                                            <p className="text-sm text-gray-500">{i + 1}</p>
+
+                                            {dayEvents.map(event => (
+                                                <div key={event.id} className="flex items-center">
+                                                    <span className="rounded-xl w-2 h-2 mr-3" style={{ backgroundColor: event.color }}></span>
+                                                    <span className="font-semibold w-1/2">{event.title}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                        ) : (<p className="text-gray-500">No filter selected.</p>)}
+                </div>
+            </div>
+        </>
+    );
+}
