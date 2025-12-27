@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Date;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -11,25 +12,26 @@ class DateController extends Controller
     public function index(Request $request)
     {
         $filter = $request->query('filter', 'month');
+        $selectedDate = Carbon::parse($request->query('date', now()));
         $query = Date::query();
 
-        switch ($filter) {
-            case 'day':
-                $query->whereDate('date', now()->toDateString());
-                break;
-            case 'week':
-                $query->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
-                break;
-            case 'month':
-            default:
-                $query->whereMonth('date', now()->month)
-                      ->whereYear('date', now()->year);
-                break;
-        }
+        match ($filter) {
+            'day' => $query->whereDate('date', $selectedDate),
+
+            'week' => $query->whereBetween('date', [
+                $selectedDate->copy()->startOfWeek(),
+                $selectedDate->copy()->endOfWeek(),
+            ]),
+        
+            default => $query
+                ->whereMonth('date', $selectedDate->month)
+                ->whereYear('date', $selectedDate->year),
+        };
 
         return Inertia::render('calendar', [
             'dates' => $query->orderBy('date', 'asc')->get(),
-            'filter' => $filter
+            'filter' => $filter,
+            'date' => $request->query('date', now()->toDateString()),
         ]);
     }
 

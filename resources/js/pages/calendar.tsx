@@ -1,4 +1,6 @@
+import NavigationComponent from '@/components/navigation';
 import { Form, router } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
 
 interface Dates {
     date: string;
@@ -11,9 +13,11 @@ interface Dates {
 interface CalendarProps {
     dates: Dates[];
     filter: string;
+    date: Date;
 }
 
-export default function Welcome({ dates, filter }: CalendarProps) {
+export default function Welcome({ dates, filter, date }: CalendarProps) {
+    const selectedDate = date ? new Date(date) : new Date();
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         router.get('/', { filter: e.target.value }, { preserveState: true });
@@ -49,17 +53,21 @@ export default function Welcome({ dates, filter }: CalendarProps) {
                             <option value="month">Month</option>
                         </select>
                     </div>
+                    <NavigationComponent selectedDate={selectedDate} filter={filter} />
                     {filter === 'day' ? (
                         <div>
                             {Array.from({ length: 24 }, (_, i) => i).map(hour => {
-                                const eventsAtHour = dates.filter(
-                                    e => new Date(e.date).getHours() === hour
-                                );
-
+                                const eventsAtHour = dates.filter(e => {
+                                    const eventDate = new Date(e.date);
+                                    return (
+                                        eventDate.getHours() === hour &&
+                                        eventDate.toDateString() === selectedDate.toDateString()
+                                    );
+                                });
                                 return (
                                     <div key={hour} className="border rounded mb-2 p-2">
                                         <p className="text-sm text-gray-500">
-                                            {hour.toString().padStart(2, '0')}:00
+                                            {hour.toString()}:00
                                         </p>
 
                                         {eventsAtHour.map(event => (
@@ -74,17 +82,21 @@ export default function Welcome({ dates, filter }: CalendarProps) {
                         </div>) : filter === 'week' ? (
                             <div>
                                 {Array.from({ length: 7 }, (_, i) => {
-                                    const day = new Date();
-                                    day.setDate(day.getDate() - day.getDay() + i + 1);
+                                    const day = new Date(selectedDate);
+                                    const startOfWeek = new Date(day);
+                                    startOfWeek.setDate(day.getDate() - day.getDay());
 
-                                    const dayEvents = dates.filter(
-                                        e => new Date(e.date).toDateString() === day.toDateString()
+                                    const currentDay = new Date(startOfWeek);
+                                    currentDay.setDate(startOfWeek.getDate() + i + 1);
+
+                                    const dayEvents = dates.filter(e =>
+                                        new Date(e.date).toDateString() === currentDay.toDateString()
                                     );
 
                                     return (
                                         <div key={i} className="border rounded mb-2 p-2">
                                             <p className="text-sm text-gray-500">
-                                                {day.toLocaleDateString(undefined, { weekday: 'long' })}
+                                                {currentDay.toLocaleDateString(undefined, { weekday: 'long' })}
                                             </p>
 
                                             {dayEvents.map(event => (
@@ -99,12 +111,15 @@ export default function Welcome({ dates, filter }: CalendarProps) {
                             </div>
                         ) : filter === 'month' ? (
                             <div>
-                                {Array.from({ length: 30 }, (_, i) => {
-                                    const day = new Date();
-                                    day.setDate(i + 1);
+                                {Array.from({ length: new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate() }, (_, i) => {
+                                    const day = new Date(
+                                        selectedDate.getFullYear(),
+                                        selectedDate.getMonth(),
+                                        i + 1
+                                    );
 
-                                    const dayEvents = dates.filter(
-                                        e => new Date(e.date).getDate() === day.getDate()
+                                    const dayEvents = dates.filter(e =>
+                                        new Date(e.date).toDateString() === day.toDateString()
                                     );
 
                                     return (
