@@ -1,6 +1,5 @@
-import { Icon, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface Dates {
@@ -27,7 +26,6 @@ export default function Event({ date }: EventProps) {
                     <h2 className='text-2xl font-semibold mb-4'>{new Date(date.date).toLocaleString()}</h2>
                     {date.description ? <p className='mb-4 text-gray-600'>{date.description}</p> : <p className="mb-4 text-gray-600">No description provided.</p>}
                     <div>
-                        <IconButton><EditIcon /></IconButton>
                         <IconButton href={`/delete-event/${date.id}`}><DeleteIcon /></IconButton>
                     </div>
                 </div>
