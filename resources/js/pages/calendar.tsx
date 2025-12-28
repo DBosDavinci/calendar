@@ -12,13 +12,18 @@ interface Dates {
     id: number;
 }
 
+interface errors {
+    date: string;
+}
+
 interface CalendarProps {
     dates: Dates[];
     filter: string;
     date: Date;
+    errors: errors;
 }
 
-export default function Calendar({ dates, filter, date }: CalendarProps) {
+export default function Calendar({ dates, filter, date, errors }: CalendarProps) {
     const selectedDate = date ? new Date(date) : new Date();
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -47,14 +52,15 @@ export default function Calendar({ dates, filter, date }: CalendarProps) {
                             <input type="color" name="color" className="rounded border border-gray-300 px-5 py-1" required />
                         </div>
 
-                        <div className='flex items-center mb-5'>
+                        <div className='flex items-center'>
                             <label className="mr-3 text-lg font-medium w-1/5">Date</label>
                             <input type="datetime-local" name="date" className="rounded border border-gray-300 px-3 py-2 w-4/5" required />
                         </div>
+                        {errors.date && <span className="text-red-500 text-sm">{errors.date}</span>}
 
                         <button
                             type='submit'
-                            className="mt-4 rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600 disabled:opacity-50 w-full"
+                            className="mt-5 rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600 disabled:opacity-50 w-full"
                         >
                             Submit Event
                         </button>
