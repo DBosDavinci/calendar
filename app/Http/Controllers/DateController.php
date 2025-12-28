@@ -35,7 +35,14 @@ class DateController extends Controller
         ]);
     }
 
-    public function submitDate(Request $request)
+    public function event(Request $request, $id)
+    {
+        return Inertia::render('event', [
+            'date' => Date::find($id),
+        ]);
+    }
+
+    public function submitEvent(Request $request)
     {
         $data = $request->validate([
             'date' => 'required',
@@ -44,7 +51,26 @@ class DateController extends Controller
             'color' => 'required|string|max:7',
         ]);
 
+        $date = Carbon::parse($data['date']);
+
+        $startOfMinute = $date->copy()->subHours(2);
+        $endOfMinute = $date->copy()->addHours(2);
+
+        if (Date::whereBetween('date', [$startOfMinute, $endOfMinute])->exists()) {
+            return back()->withErrors([
+                'date' => 'An event already exists at this time.'
+            ]);
+        }
+
         Date::create($data);
+
+        return redirect('/');
+    }
+
+    public function deleteEvent(Request $request, $id)
+    {
+        $date = Date::find($id);
+        $date->delete();
 
         return redirect('/');
     }

@@ -1,6 +1,8 @@
 import NavigationComponent from '@/components/navigation';
 import { Form, router } from '@inertiajs/react';
-import React, { useState, useEffect } from 'react';
+import { IconButton } from '@mui/material';
+import React from 'react';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 interface Dates {
     date: string;
@@ -16,11 +18,11 @@ interface CalendarProps {
     date: Date;
 }
 
-export default function Welcome({ dates, filter, date }: CalendarProps) {
+export default function Calendar({ dates, filter, date }: CalendarProps) {
     const selectedDate = date ? new Date(date) : new Date();
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        router.get('/', { filter: e.target.value }, { preserveState: true });
+        router.get('/', { filter: e.target.value });
     };
 
     return (
@@ -29,7 +31,7 @@ export default function Welcome({ dates, filter, date }: CalendarProps) {
                 <h1 className="text-4xl font-semibold">Calendar</h1>
                 <div className="mt-20 w-full max-w-md">
                     <h2 className='text-2xl font-semibold mb-4'>Plan an event</h2>
-                    <Form method="post" action="/submit-date">
+                    <Form method="post" action="/submit-event">
                         <input type="text" name="title" placeholder="Event Title" className="mb-4 rounded border border-gray-300 px-3 py-2 w-full" required />
                         <textarea name="description" placeholder="Event Description" className="mb-4 rounded border border-gray-300 px-3 py-2 w-full" />
                         <label className="mr-3 text-lg font-medium">Color</label>
@@ -73,7 +75,8 @@ export default function Welcome({ dates, filter, date }: CalendarProps) {
                                         {eventsAtHour.map(event => (
                                             <div key={event.id} className="flex items-center">
                                                 <span className="rounded-xl w-2 h-2 mr-3" style={{ backgroundColor: event.color }}></span>
-                                                <span className="font-semibold w-1/2">{event.title}</span>
+                                                <span className="font-semibold">{event.title}</span>
+                                                <span className='ml-auto'><IconButton href={`/event/${event.id}`}><VisibilityIcon /></IconButton></span>
                                             </div>
                                         ))}
                                     </div>
@@ -102,7 +105,8 @@ export default function Welcome({ dates, filter, date }: CalendarProps) {
                                             {dayEvents.map(event => (
                                                 <div key={event.id} className="flex items-center">
                                                     <span className="rounded-xl w-2 h-2 mr-3" style={{ backgroundColor: event.color }}></span>
-                                                    <span className="font-semibold w-1/2">{event.title}</span>
+                                                    <span className="font-semibold">{event.title}</span>
+                                                    <span className='ml-auto'><IconButton href={`/event/${event.id}`}><VisibilityIcon /></IconButton></span>
                                                 </div>
                                             ))}
                                         </div>
@@ -129,7 +133,8 @@ export default function Welcome({ dates, filter, date }: CalendarProps) {
                                             {dayEvents.map(event => (
                                                 <div key={event.id} className="flex items-center">
                                                     <span className="rounded-xl w-2 h-2 mr-3" style={{ backgroundColor: event.color }}></span>
-                                                    <span className="font-semibold w-1/2">{event.title}</span>
+                                                    <span className="font-semibold">{event.title}</span>
+                                                    <span className='ml-auto'><IconButton href={`/event/${event.id}`}><VisibilityIcon /></IconButton></span>
                                                 </div>
                                             ))}
                                         </div>
