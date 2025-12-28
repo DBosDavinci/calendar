@@ -38,23 +38,23 @@ export default function Calendar({ dates, filter, date, errors }: CalendarProps)
                     <h2 className='text-2xl font-semibold mb-4'>Plan an event</h2>
                     <Form method="post" action="/submit-event">
                         <div className='flex items-center mb-5'>
-                            <label className="mr-3 text-lg font-medium w-1/5">Title</label>
-                            <input type="text" name="title" className="rounded border border-gray-300 px-3 py-2 w-4/5" required />
+                            <label className="mr-3 text-lg font-medium w-3/10">Title</label>
+                            <input type="text" name="title" className="rounded border border-gray-300 px-3 py-2 w-7/10" required />
                         </div>
 
                         <div className='flex items-center mb-5'>
-                            <label className="mr-3 text-lg font-medium w-1/5">Description</label>
-                            <textarea name="description" className="rounded border border-gray-300 px-3 py-2 w-4/5" />
+                            <label className="mr-3 text-lg font-medium w-3/10">Description</label>
+                            <textarea name="description" className="rounded border border-gray-300 px-3 py-2 w-7/10" />
                         </div>
 
                         <div className='flex items-center mb-5'>
-                            <label className="mr-3 text-lg font-medium w-1/5">Color</label>
+                            <label className="mr-3 text-lg font-medium w-3/10">Color</label>
                             <input type="color" name="color" className="rounded border border-gray-300 px-5 py-1" required />
                         </div>
 
                         <div className='flex items-center'>
-                            <label className="mr-3 text-lg font-medium w-1/5">Date</label>
-                            <input type="datetime-local" name="date" className="rounded border border-gray-300 px-3 py-2 w-4/5" required />
+                            <label className="mr-3 text-lg font-medium w-3/10">Date</label>
+                            <input type="datetime-local" name="date" className="rounded border border-gray-300 px-3 py-2 w-7/10" required />
                         </div>
                         {errors.date && <span className="text-red-500 text-sm">{errors.date}</span>}
 
