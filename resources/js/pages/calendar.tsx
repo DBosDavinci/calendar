@@ -106,11 +106,13 @@ export default function Calendar({ dates, filter, date, errors }: CalendarProps)
                             <div>
                                 {Array.from({ length: 7 }, (_, i) => {
                                     const day = new Date(selectedDate);
+
                                     const startOfWeek = new Date(day);
-                                    startOfWeek.setDate(day.getDate() - day.getDay());
+                                    const diff = (day.getDay() + 6) % 7;
+                                    startOfWeek.setDate(day.getDate() - diff);
 
                                     const currentDay = new Date(startOfWeek);
-                                    currentDay.setDate(startOfWeek.getDate() + i + 1);
+                                    currentDay.setDate(startOfWeek.getDate() + i);
 
                                     const dayEvents = dates.filter(e =>
                                         new Date(e.date).toDateString() === currentDay.toDateString()
